@@ -8,7 +8,7 @@ fi
 
 # get versions for software that needs to be installed
 source /workspace/versions.config
-
+export K8S_VERSION
 ### setting up some important variables to control the build process
 
 # place to store our created sd-image file
