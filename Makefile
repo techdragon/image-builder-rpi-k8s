@@ -1,3 +1,5 @@
+.PHONY: docker-setup
+
 default: build
 
 build:

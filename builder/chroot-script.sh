@@ -39,7 +39,6 @@ function clean_print(){
 function get_gpg(){
   GPG_KEY="${1}"
   KEY_URL="${2}"
-
   clean_print print "${GPG_KEY}"
   GPG_KEY=$(clean_print fpr "${GPG_KEY}")
 
@@ -49,7 +48,7 @@ function get_gpg(){
     wget -q -O "${KEY_FILE}" "${KEY_URL}"
   elif [[ -z "${KEY_URL}" ]]; then
     echo "no source given try to load from key server"
-#    gpg --keyserver "${KEYSERVER}" --recv-keys "${GPG_KEY}"
+    # gpg --keyserver "${KEYSERVER}" --recv-keys "${GPG_KEY}"
     apt-key adv --keyserver "${KEYSERVER}" --recv-keys "${GPG_KEY}"
     return $?
   else
@@ -118,6 +117,13 @@ get_gpg "${RPI_ORG_FPR}" "${RPI_ORG_KEY_URL}"
 
 echo 'deb http://archive.raspberrypi.org/debian/ jessie main' | tee /etc/apt/sources.list.d/raspberrypi.list
 
+# set up k8s repo
+APT_K8S_FPR=D0BC747FD8CAF7117500D6FA3746C208A7317B0F
+APT_K8S_KEY_URL=https://packages.cloud.google.com/apt/doc/apt-key.gpg
+get_gpg "${APT_K8S_FPR}" "${APT_K8S_KEY_URL}"
+
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+
 # reload package sources
 apt-get update
 apt-get upgrade -y
@@ -140,6 +146,21 @@ apt-get install -y \
   "libraspberrypi-dev=${KERNEL_BUILD}" \
   "libraspberrypi-bin=${KERNEL_BUILD}"
 
+# install k8s tools
+apt-get install -y
+  "kubeadm=${K8S_VERSION}" \
+  "kubelet=${K8S_VERSION}" \
+  "kubectl=${K8S_VERSION}"
+
+# config is not there yet, but this setups it for root
+echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
+
+# download flannel
+curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm/g" > /root/kube-flannel.yml
+
+# install common tools
+apt-get install -y vim tcpdump ntp
+
 # enable serial console
 printf "# Spawn a getty on Raspberry Pi serial line\nT0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100\n" >> /etc/inittab
 
@@ -152,15 +173,15 @@ hdmi_force_hotplug=1
 enable_uart=1
 " > boot/config.txt
 
-echo "# camera settings, see http://elinux.org/RPiconfig#Camera
-start_x=1
-disable_camera_led=1
-gpu_mem=128
-" >> boot/config.txt
-
-# /etc/modules
-echo "snd_bcm2835
-" >> /etc/modules
+# echo "# camera settings, see http://elinux.org/RPiconfig#Camera
+# start_x=1
+# disable_camera_led=1
+# gpu_mem=128
+# " >> boot/config.txt
+#
+# # /etc/modules
+# echo "snd_bcm2835
+# " >> /etc/modules
 
 # create /etc/fstab
 echo "
@@ -183,10 +204,10 @@ apt-get install -y \
   crda
 
 # add firmware and packages for managing bluetooth devices
-apt-get install -y \
-  --no-install-recommends \
-  bluetooth \
-  pi-bluetooth
+# apt-get install -y \
+#   --no-install-recommends \
+#   bluetooth \
+#   pi-bluetooth
 
 # ensure compatibility with Docker install.sh, so `raspbian` will be detected correctly
 apt-get install -y \
@@ -202,20 +223,20 @@ ln -s /boot/user-data /var/lib/cloud/seed/nocloud-net/user-data
 ln -s /boot/meta-data /var/lib/cloud/seed/nocloud-net/meta-data
 
 # install docker-machine
-curl -sSL -o /usr/local/bin/docker-machine "https://github.com/docker/machine/releases/download/v${DOCKER_MACHINE_VERSION}/docker-machine-Linux-armhf"
-chmod +x /usr/local/bin/docker-machine
+# curl -sSL -o /usr/local/bin/docker-machine "https://github.com/docker/machine/releases/download/v${DOCKER_MACHINE_VERSION}/docker-machine-Linux-armhf"
+# chmod +x /usr/local/bin/docker-machine
 
 # install bash completion for Docker Machine
-curl -sSL "https://raw.githubusercontent.com/docker/machine/v${DOCKER_MACHINE_VERSION}/contrib/completion/bash/docker-machine.bash" -o /etc/bash_completion.d/docker-machine
+# curl -sSL "https://raw.githubusercontent.com/docker/machine/v${DOCKER_MACHINE_VERSION}/contrib/completion/bash/docker-machine.bash" -o /etc/bash_completion.d/docker-machine
 
 # install docker-compose
-apt-get install -y \
-  --no-install-recommends \
-  python-pip
-pip install "docker-compose==${DOCKER_COMPOSE_VERSION}"
+# apt-get install -y \
+#   --no-install-recommends \
+#   python-pip
+# pip install "docker-compose==${DOCKER_COMPOSE_VERSION}"
 
 # install bash completion for Docker Compose
-curl -sSL "https://raw.githubusercontent.com/docker/compose/${DOCKER_COMPOSE_VERSION}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
+# curl -sSL "https://raw.githubusercontent.com/docker/compose/${DOCKER_COMPOSE_VERSION}/contrib/completion/bash/docker-compose" -o /etc/bash_completion.d/docker-compose
 
 # install docker-ce (w/ install-recommends)
 apt-get install -y --force-yes \

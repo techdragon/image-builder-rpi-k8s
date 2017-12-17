@@ -7,6 +7,10 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "forwarded_port", guest: 2376, host: 2376, auto_correct: true
   config.vm.synced_folder ".", "#{`pwd`.chomp}"
+  config.vm.synced_folder "/Users/tombar/code/k8s-glocal-poc/image-builder-raw", "/Users/tombar/code/k8s-glocal-poc/image-builder-raw"
+
+  config.ssh.insert_key = true
+  #config.vm.network "public_network"
 
   config.vm.provider "vmware_fusion" do |v|
     # Customize the amount of memory on the VM:
