@@ -47,7 +47,7 @@ export DOCKER_HOST=tcp://127.0.0.1:2376
 ### Build the SD card image
 
 From here you can just make the SD card image. The output will be written and
-compressed to `hypriotos-rpi-dirty.img.zip`.
+compressed to `rpi-k8s-dirty.img.zip`.
 
 ```bash
 make sd-image
@@ -70,7 +70,7 @@ folder against your Raspberry Pi. Set the environment variable `BOARD` to the
 IP address or host name of your running Raspberry Pi.
 
 ```bash
-flash hypriotos-rpi-dirty.img.zip
+flash rpi-k8s-dirty.img.zip
 BOARD=black-pearl.local make test-integration
 ```
 

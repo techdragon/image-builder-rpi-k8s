@@ -12,10 +12,11 @@ branches:
 deploy:
   provider: releases
   skip_cleanup: true
-  api_key: ${GITHUB_TOKEN}
+  api_key:
+    secure: BnVc2KWELrRoO0ax92iZenK81b8RqRI3MEvNi/b7vUKrUGWUUpev/gdshho/NQA9ihONXP/tpv626pjTKwpbfEBTWquTCZb+Bn+5siP9EzEjzHHriT71TQALKZ2bW3sDmRtkzuy9M4yDzCDBAcrv7H+CWD8eG4oEUXOIOa53gwYU3bOOj44RPNK2j68eSTdrWNlaFXJTFkoC0Fvc3KuyXiJBl6NvlCM7ux2fFnrdxh1ksqoEI7asXvXaY4CjtQmSUQ3XQhZ7JdZatxN7litu2Kkg44D9cpj6Depfcr5T3u5yuqUfVyyAvoGkuES4Q80N2cb3S89AAByjQfqu+v+ZghibDKQwy01kJ/EcixFvt7+89NmMTJOLLnusi2iskKvpCY1kdB0mJnKrY9MHtQlrUzwFQ7iB3oi6mJU49Ks7S9KQXKgn9TyXXK5szvh182gqvDZfH5fxmvWGF+fgu7wYyS301QK/zSa4qibjgW/HqT3OgwtLJ2KBQ7zYcipU5uFAMe8ef19Jvjr9gw6Z2COtGOSdSwKT5kn0dfgOCKe8j1cRPZNtj0d4oTDYEPjnwAMgEcmqpr8qYWYJZRiig4hDP2UnHcMY7Xq4KDz4kzRKJyNBUAuKC8cOt+RLrCBuELHisK+uCnFCYIh8MonVhakWx4Nn9fCGKsH6zPPbmkwc3BE=
   file:
-    - hypriotos-rpi-${TRAVIS_TAG}.img.zip
-    - hypriotos-rpi-${TRAVIS_TAG}.img.zip.sha256
+    - rpi-k8s-${TRAVIS_TAG}.img.zip
+    - rpi-k8s-${TRAVIS_TAG}.img.zip.sha256
   on:
     tags: true
-    repo: ${TRAVIS_REPO_SLUG}
+    repo: Tombar/image-builder-rpi-k8s
