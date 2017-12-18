@@ -147,7 +147,7 @@ apt-get install -y \
   "libraspberrypi-bin=${KERNEL_BUILD}"
 
 # install k8s tools
-apt-get install -y
+apt-get install -y \
   "kubeadm=${K8S_VERSION}" \
   "kubelet=${K8S_VERSION}" \
   "kubectl=${K8S_VERSION}"
