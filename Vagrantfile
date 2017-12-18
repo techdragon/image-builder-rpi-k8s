@@ -6,8 +6,12 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/xenial64"
 
   config.vm.network "forwarded_port", guest: 2376, host: 2376, auto_correct: true
-  config.vm.synced_folder ".", "#{`pwd`.chomp}"
-  config.vm.synced_folder "/Users/tombar/code/k8s-glocal-poc/image-builder-raw", "/Users/tombar/code/k8s-glocal-poc/image-builder-raw"
+  config.vm.synced_folder ".", Dir.pwd
+  # needed to build larger raw image
+  image_builder_raw_repo = Dir.pwd.sub('image-builder-rpi','image-builder-raw')
+  if Dir.exists?(image_builder_raw_repo)
+    config.vm.synced_folder image_builder_raw_repo, image_builder_raw_repo
+  end
 
   config.ssh.insert_key = true
   #config.vm.network "public_network"
